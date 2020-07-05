@@ -1,10 +1,10 @@
 package com.github.PetrIlya.crawler;
 
 import com.github.PetrIlya.util.PathUtil;
+import com.github.PetrIlya.util.PropertiesUtil;
 
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
+import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Objects;
@@ -35,26 +35,24 @@ public class LexemesCrawlerConfig extends CrawlerConfig {
     }
 
     public static LexemesCrawlerConfig getInstance(final String pathToProperties) {
-        if (pathToProperties.isEmpty()) {
-            throw new IllegalArgumentException("Path to the configuration file doesn't specified");
-        }
-        final LexemesCrawlerConfig lexemesCrawlerConfig = new LexemesCrawlerConfig();
-        final Properties properties = new Properties(DEFAULT_VARIABLES_AMOUNT);
         try {
-            final String pathToResource = PathUtil.getAbsolutePathToResource(pathToProperties);
-            final InputStream propertiesStream = new FileInputStream(pathToResource);
-            properties.load(propertiesStream);
-            lexemesCrawlerConfig.processProperties(properties);
-            propertiesStream.close();
+            Properties properties = PropertiesUtil.
+                    getProperties(DEFAULT_VARIABLES_AMOUNT,
+                                  PathUtil.getAbsolutePathToResource(pathToProperties));
+            LexemesCrawlerConfig config = new LexemesCrawlerConfig();
+            config.processProperties(properties);
+            return config;
         } catch (IOException e) {
-            throw new IllegalArgumentException(e);
+            throw new UncheckedIOException(e);
         }
-        return lexemesCrawlerConfig;
     }
 
     @Override
     public LexemesWebCrawler getWebCrawler() {
-        return null;
+        return new LexemesWebCrawler(this.maxDepth,
+                                     this.maxPagesVisited,
+                                     this.seedAddr,
+                                     this.lexemesToSearch);
     }
 
     private void processProperties(final Properties properties) {

@@ -40,13 +40,16 @@ public class LexemesWebCrawler extends WebCrawler {
         diveTo(seedURL);
     }
 
+    /**
+     * Recursively processes given seed
+     *
+     * @param url seed to process
+     */
     private void diveTo(CrawlURL url) {
         try {
             url.getOutgoingURLs().
                     stream().
                     filter(outURL -> !visited.contains(url)).
-                    filter(outURL -> outURL.getUrl().
-                            startsWith(url.getUrl())).
                     collect(Collectors.toSet()).
                     forEach(outURL -> {
                         if (processURL(url)) {
@@ -58,6 +61,12 @@ public class LexemesWebCrawler extends WebCrawler {
         }
     }
 
+    /**
+     * Processes given URL (Add to statistic and crawler stats)
+     *
+     * @param url URL to process
+     * @return Should next URL be processed
+     */
     public boolean processURL(CrawlURL url) {
         if (this.pagesVisited.get() != getMaxPagesVisited() &&
                 url.getDepth() <= getMaxDepth()) {

@@ -1,5 +1,8 @@
 package com.github.PetrIlya.net;
 
+import org.jsoup.nodes.Document;
+
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -30,16 +33,20 @@ public class LexemeStatistic {
 
     public int getAmountOfEntries(CrawlURL url, String lexeme) {
         int amount = 0;
-        final String document = url.getDocument().wholeText();
-        if (document == null) {
+        Document htmlDoc = null;
+        try {
+            htmlDoc = url.tryGetDocument();
+        } catch (IOException e) {
             return 0;
         }
+        String text = htmlDoc.wholeText();
         int indexOfLexeme = 0;
         do {
-            indexOfLexeme = document.indexOf(lexeme,
-                                             indexOfLexeme + lexeme.length());
+            indexOfLexeme = text.indexOf(lexeme,
+                                         indexOfLexeme);
             if (indexOfLexeme > 0) {
                 amount++;
+                indexOfLexeme += lexeme.length();
             } else {
                 return amount;
             }
