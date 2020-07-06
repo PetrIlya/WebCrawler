@@ -4,6 +4,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
 import java.io.IOException;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -51,12 +52,25 @@ public class CrawlURL implements Comparable<CrawlURL> {
                 select("a[href]").
                 stream().
                 map(e -> new CrawlURL(e.attr("abs:href"),
-                                      depth++)).
+                                      depth + 1)).
                 collect(Collectors.toSet());
     }
 
     @Override
     public int compareTo(CrawlURL o) {
         return o.getUrl().compareTo(this.getUrl());
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        CrawlURL crawlURL = (CrawlURL) o;
+        return url.equals(crawlURL.url);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(url);
     }
 }

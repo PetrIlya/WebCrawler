@@ -1,7 +1,16 @@
 package com.github.PetrIlya;
 
+import com.github.PetrIlya.crawler.LexemesCrawlerConfig;
+import com.github.PetrIlya.crawler.LexemesWebCrawler;
+
 public class App {
     public static void main(String[] args) {
-        System.out.println("Hello World!");
+        if (args.length == 0) {
+            System.exit(-1);
+        }
+        LexemesWebCrawler crawler = LexemesCrawlerConfig.
+                getInstance(args[0]).
+                getWebCrawler();
+        crawler.startCrawl();
     }
 }

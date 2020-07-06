@@ -4,61 +4,58 @@ import com.github.PetrIlya.net.CrawlURL;
 import com.github.PetrIlya.net.LexemeStatistic;
 
 import java.io.IOException;
+import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentSkipListSet;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingDeque;
 import java.util.stream.Collectors;
 
 public class LexemesWebCrawler extends WebCrawler {
-    private final Set<String> lexemes;
     private final Set<CrawlURL> visited;
     private final LexemeStatistic statistic;
-    private final ExecutorService executorService;
+    private final Queue<CrawlURL> toVisit;
 
     public LexemesWebCrawler(int maxDepth,
                              int maxPagesVisited,
                              String seed,
                              Set<String> lexemes) {
         super(maxDepth, maxPagesVisited, seed);
-        this.lexemes = lexemes;
         this.visited = new ConcurrentSkipListSet<>();
-        this.executorService = Executors.newSingleThreadExecutor();
-        this.statistic = new LexemeStatistic(this.lexemes);
+        this.statistic = new LexemeStatistic(lexemes);
+        this.toVisit = new LinkedBlockingDeque<>();
     }
 
     @Override
     public CompletableFuture<Void> startCrawlAsync() {
-        throw new UnsupportedOperationException();
+        toVisit.add(new CrawlURL(this.getSeed(),
+                                 0));
+        return null;
     }
 
     @Override
     public void startCrawl() {
-        CrawlURL seedURL = new CrawlURL(getSeed(),
-                                        0);
-        diveTo(seedURL);
-    }
-
-    /**
-     * Recursively processes given seed
-     *
-     * @param url seed to process
-     */
-    private void diveTo(CrawlURL url) {
-        try {
-            url.getOutgoingURLs().
-                    stream().
-                    filter(outURL -> !visited.contains(url)).
-                    collect(Collectors.toSet()).
-                    forEach(outURL -> {
-                        if (processURL(url)) {
-                            diveTo(url);
-                        }
-                    });
-        } catch (IOException e) {
-            return;
+        toVisit.add(new CrawlURL(this.getSeed(),
+                                 0));
+        while (true) {
+            CrawlURL url = toVisit.poll();
+            if (url == null ||
+                    toVisit.size() > maxPagesVisited) {
+                break;
+            }
+            if (processURL(url)) {
+                try {
+                    toVisit.
+                            addAll(url.getOutgoingURLs().
+                                    stream().
+                                    filter(out -> !visited.contains(out)).
+                                    collect(Collectors.toList()));
+                } catch (IOException e) {
+                    continue;
+                }
+            }
         }
+        while (processURL(toVisit.poll())) ;
     }
 
     /**
@@ -68,13 +65,18 @@ public class LexemesWebCrawler extends WebCrawler {
      * @return Should next URL be processed
      */
     public boolean processURL(CrawlURL url) {
-        if (this.pagesVisited.get() != getMaxPagesVisited() &&
-                url.getDepth() <= getMaxDepth()) {
-            pagesVisited.incrementAndGet();
-            visited.add(url);
-            statistic.addToStatistic(url);
-            return true;
+        if (url == null ||
+                this.pagesVisited.get() == getMaxPagesVisited() ||
+                url.getDepth() >= getMaxDepth()) {
+            return false;
         }
-        return false;
+        pagesVisited.incrementAndGet();
+        visited.add(url);
+        statistic.addToStatistic(url);
+        return true;
+    }
+
+    public LexemeStatistic getStatistic() {
+        return statistic;
     }
 }

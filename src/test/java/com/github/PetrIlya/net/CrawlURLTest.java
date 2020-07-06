@@ -21,7 +21,7 @@ public class CrawlURLTest {
     @Test
     public void getOutgoingURLs_CorrectURLTest() {
         try {
-            CrawlURL crawlURL = new CrawlURL("https://en.wikipedia.org/wiki/SpaceX",
+            CrawlURL crawlURL = new CrawlURL("https://en.wikipedia.org/wiki/Wikipedia",
                                              0);
             assertFalse(crawlURL.getOutgoingURLs().isEmpty());
         } catch (IOException e) {

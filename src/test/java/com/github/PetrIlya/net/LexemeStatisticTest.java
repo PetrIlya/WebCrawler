@@ -4,6 +4,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.IOException;
 import java.util.Map;
 import java.util.Set;
 
@@ -40,14 +41,18 @@ public class LexemeStatisticTest {
     }
 
     @Test
-    public void getAmountOfEntries_ValidCase() {
-        Assert.assertEquals(statistic.getAmountOfEntries(new CrawlURL("https://en.wikipedia.org/wiki/SpaceX", 0),
-                                                         "SpaceX"), 426);
+    public void getAmountOfEntries_ValidCase() throws IOException {
+        Assert.assertEquals(425, statistic.
+                getAmountOfEntries(new CrawlURL("https://en.wikipedia.org/wiki/SpaceX",
+                                                0),
+                                   "SpaceX"));
     }
 
     @Test
     public void getAmountOfEntries_ExceptionCase() {
-        Assert.assertEquals(statistic.getAmountOfEntries(new CrawlURL("https://en.widia.org/wiki/SpaceX", 0),
-                                                         "SpaceX"), 0);
+        Assert.assertEquals(0, statistic.
+                getAmountOfEntries(new CrawlURL("https://en.widia.org/wiki/SpaceX",
+                                                0),
+                                   "SpaceX"));
     }
 }

@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class LexemeStatistic {
     private final Set<String> lexemes;
@@ -32,21 +33,27 @@ public class LexemeStatistic {
     }
 
     public int getAmountOfEntries(CrawlURL url, String lexeme) {
-        int amount = 0;
+        AtomicInteger amount = new AtomicInteger();
         Document htmlDoc = null;
         try {
             htmlDoc = url.tryGetDocument();
         } catch (IOException e) {
-            return 0;
+            return amount.get();
         }
-        String text = htmlDoc.wholeText();
+        String text = htmlDoc.body().text();
+        amount.set(getAmountOfOccurencesInString(text,
+                                                 lexeme));
+        return amount.get();
+    }
+
+    public int getAmountOfOccurencesInString(String text, String lexeme) {
+        int amount = 0;
         int indexOfLexeme = 0;
         do {
-            indexOfLexeme = text.indexOf(lexeme,
-                                         indexOfLexeme);
-            if (indexOfLexeme > 0) {
+            indexOfLexeme = text.indexOf(lexeme, indexOfLexeme);
+            if (indexOfLexeme >= 0) {
                 amount++;
-                indexOfLexeme += lexeme.length();
+                indexOfLexeme += lexeme.length() - 1;
             } else {
                 return amount;
             }
