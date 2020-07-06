@@ -88,4 +88,20 @@ public class LexemeStatistic {
 
         return topURL;
     }
+
+    @Override
+    public String toString() {
+        final StringBuilder result = new StringBuilder();
+        statMap.forEach((k, map) -> {
+            result.append("Seed:").append(k.getUrl());
+            map.entrySet().
+                    stream().
+                    sorted(Map.Entry.comparingByKey()).
+                    forEachOrdered(e -> result.
+                            append(" ").
+                            append(e.getValue()));
+            result.append("\n");
+        });
+        return result.toString();
+    }
 }

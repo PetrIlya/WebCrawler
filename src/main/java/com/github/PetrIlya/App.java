@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 public class App {
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, InterruptedException {
         if (args.length == 0) {
             System.exit(-1);
         }
@@ -51,5 +51,9 @@ public class App {
                                                    getTopURLByRule(10, rule),
                                            arrHeaders,
                                            "best");
+        Process p = Runtime.getRuntime().exec("cmd.exe /c start echo " +
+                                                      "\"" +
+                                                      crawler.getStatistic().toString()
+                                                      + "\"");
     }
 }
