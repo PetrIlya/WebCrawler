@@ -3,11 +3,9 @@ package com.github.PetrIlya.net;
 import org.jsoup.nodes.Document;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 public class LexemeStatistic {
     private final Set<String> lexemes;
@@ -62,5 +60,32 @@ public class LexemeStatistic {
 
     public Map<CrawlURL, Map<String, Integer>> getStatMap() {
         return statMap;
+    }
+
+    public Set<String> getLexemes() {
+        return lexemes;
+    }
+
+    public Map<CrawlURL, Map<String, Integer>> getTopURLByRule(int limit,
+                                                               Comparator<? super Map.
+                                                                       Entry<CrawlURL,
+                                                                       Map<String, Integer>>> rule) {
+        if (limit < 0) {
+            throw new IllegalArgumentException();
+        }
+        final List<CrawlURL> topURLbyTotalHints = statMap.
+                entrySet().
+                stream().
+                sorted(rule).
+                map(Map.Entry::getKey).
+                limit(10).
+                collect(Collectors.toList());
+        Map<CrawlURL, Map<String, Integer>> topURL =
+                new HashMap<>(topURLbyTotalHints.size());
+        topURLbyTotalHints.forEach(e -> {
+            topURL.put(e, statMap.get(e));
+        });
+
+        return topURL;
     }
 }
