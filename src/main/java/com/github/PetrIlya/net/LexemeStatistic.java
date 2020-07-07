@@ -111,7 +111,7 @@ public class LexemeStatistic {
                 limit(10).
                 collect(Collectors.toList());
         Map<CrawlURL, Map<String, Integer>> topURL =
-                new HashMap<>(topURLbyTotalHints.size());
+                new LinkedHashMap<>(topURLbyTotalHints.size());
         topURLbyTotalHints.forEach(e -> {
             topURL.put(e, statMap.get(e));
         });
