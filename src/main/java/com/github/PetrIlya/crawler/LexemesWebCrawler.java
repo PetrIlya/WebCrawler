@@ -25,6 +25,21 @@ public class LexemesWebCrawler extends WebCrawler {
         this.toVisit = new LinkedBlockingDeque<>();
     }
 
+    public LexemesWebCrawler(int maxDepth,
+                             int maxPagesVisited,
+                             String seed,
+                             LexemeStatistic statistic) {
+        super(maxDepth, maxPagesVisited, seed);
+        this.statistic = statistic;
+        this.visited = new ConcurrentSkipListSet<>();
+        this.toVisit = new LinkedBlockingDeque<>();
+    }
+
+    /**
+     * Start crawling in vlocking mode
+     * Adds seed to queue and processes with {@code processURL}
+     * If there are outgoing url the'll be added to the queue
+     */
     @Override
     public void startCrawl() {
         toVisit.add(new CrawlURL(this.getSeed(),
@@ -32,7 +47,7 @@ public class LexemesWebCrawler extends WebCrawler {
         while (true) {
             CrawlURL url = toVisit.poll();
             if (url == null ||
-                    toVisit.size() > maxPagesVisited) {
+                    toVisit.size() >= maxPagesVisited) {
                 break;
             }
             if (processURL(url)) {
@@ -45,6 +60,8 @@ public class LexemesWebCrawler extends WebCrawler {
                 } catch (IOException e) {
                     continue;
                 }
+            } else {
+                break;
             }
         }
         while (processURL(toVisit.poll())) ;
@@ -56,13 +73,12 @@ public class LexemesWebCrawler extends WebCrawler {
      * @param url URL to process
      * @return Should next URL be processed
      */
-    public boolean processURL(CrawlURL url) {
+    protected boolean processURL(CrawlURL url) {
         if (url == null ||
-                this.pagesVisited.get() == getMaxPagesVisited() ||
+                this.pagesVisited.getAndIncrement() == getMaxPagesVisited() ||
                 url.getDepth() >= getMaxDepth()) {
             return false;
         }
-        pagesVisited.incrementAndGet();
         visited.add(url);
         statistic.addToStatistic(url);
         return true;

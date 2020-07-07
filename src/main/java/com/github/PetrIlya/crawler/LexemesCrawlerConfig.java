@@ -34,6 +34,12 @@ public class LexemesCrawlerConfig extends CrawlerConfig {
         this.lexemesToSearch = lexemesToSearch;
     }
 
+    /**
+     * Initializes WebCrawlerConfig with given config
+     *
+     * @param pathToProperties path to configure file
+     * @return LexemesCrawlerConfig instance
+     */
     public static LexemesCrawlerConfig getInstance(final String pathToProperties) {
         try {
             Properties properties = PropertiesUtil.
@@ -47,6 +53,11 @@ public class LexemesCrawlerConfig extends CrawlerConfig {
         }
     }
 
+    /**
+     * Build WebCrawler according to the config
+     *
+     * @return WebCrawler instance
+     */
     @Override
     public LexemesWebCrawler getWebCrawler() {
         return new LexemesWebCrawler(this.maxDepth,
@@ -55,6 +66,11 @@ public class LexemesCrawlerConfig extends CrawlerConfig {
                                      this.lexemesToSearch);
     }
 
+    /**
+     * Processes properties and sets config variables
+     *
+     * @param properties Properties to process
+     */
     private void processProperties(final Properties properties) {
         final String maxPagesVisited = properties.getProperty("max.pages",
                                                               Integer.toString(DEFAULT_MAX_PAGES_VISITED));
@@ -69,6 +85,12 @@ public class LexemesCrawlerConfig extends CrawlerConfig {
                       lexemes);
     }
 
+    /**
+     * Returns set of lexemes from a file for crawler to search
+     *
+     * @param pathToLexemesFile path to a file to get lexemes
+     * @return Set of lexemes to process
+     */
     private Set<String> getLexemesFromFile(final String pathToLexemesFile) {
         try {
             Set<String> lexemes = Files.
@@ -86,6 +108,14 @@ public class LexemesCrawlerConfig extends CrawlerConfig {
         }
     }
 
+    /**
+     * Sets properties to fields
+     *
+     * @param maxPagesVisited limit for pages
+     * @param maxDepth        limit for depth
+     * @param seedAddr        seed to start
+     * @param lexemes         lexemes to search
+     */
     private void setProperties(final String maxPagesVisited,
                                final String maxDepth,
                                final String seedAddr,

@@ -16,10 +16,21 @@ public class LexemeStatistic {
         this.statMap = new TreeMap<>();
     }
 
+    /**
+     * Add url to statistic
+     *
+     * @param url url to add
+     */
     public void addToStatistic(CrawlURL url) {
         statMap.computeIfAbsent(url, this::getLexemesStatistic);
     }
 
+    /**
+     * Returns statistic for lexemes for given url
+     *
+     * @param url url to process
+     * @return Map with statistic
+     */
     public Map<String, Integer> getLexemesStatistic(CrawlURL url) {
         Map<String, Integer> map = new HashMap<>();
         lexemes.forEach(lexeme -> {
@@ -30,6 +41,13 @@ public class LexemeStatistic {
         return map;
     }
 
+    /**
+     * Amount of entries of given lexeme in url text
+     *
+     * @param url    url to process
+     * @param lexeme lexeme to search
+     * @return amount of entries
+     */
     public int getAmountOfEntries(CrawlURL url, String lexeme) {
         AtomicInteger amount = new AtomicInteger();
         Document htmlDoc = null;
@@ -39,12 +57,17 @@ public class LexemeStatistic {
             return amount.get();
         }
         String text = htmlDoc.body().text();
-        amount.set(getAmountOfOccurencesInString(text,
-                                                 lexeme));
+        amount.set(getAmountOfOccurrencesInString(text,
+                                                  lexeme));
         return amount.get();
     }
 
-    public int getAmountOfOccurencesInString(String text, String lexeme) {
+    /**
+     * @param text   Text to search lexeme
+     * @param lexeme lexeme to search
+     * @return amount of entries
+     */
+    public int getAmountOfOccurrencesInString(String text, String lexeme) {
         int amount = 0;
         int indexOfLexeme = 0;
         do {
@@ -66,6 +89,13 @@ public class LexemeStatistic {
         return lexemes;
     }
 
+    /**
+     * Returns fixed amount of top urls by given rule
+     *
+     * @param limit limit of output
+     * @param rule  rule to sort
+     * @return Top elements
+     */
     public Map<CrawlURL, Map<String, Integer>> getTopURLByRule(int limit,
                                                                Comparator<? super Map.
                                                                        Entry<CrawlURL,

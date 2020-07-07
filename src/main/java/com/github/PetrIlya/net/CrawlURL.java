@@ -34,6 +34,12 @@ public class CrawlURL implements Comparable<CrawlURL> {
         return document;
     }
 
+    /**
+     * Tries to load document from the url
+     *
+     * @return Document if it already was initialized
+     * @throws IOException if document can't be loaded for some reasons
+     */
     public Document tryGetDocument() throws IOException {
         if (document == null) {
             document = Jsoup.
@@ -44,10 +50,14 @@ public class CrawlURL implements Comparable<CrawlURL> {
         return document;
     }
 
+    /**
+     * Returns outgiong urls from associated document
+     *
+     * @return Set of outgoing urls or
+     * @throws IOException
+     */
     public Set<CrawlURL> getOutgoingURLs() throws IOException {
-        if (document == null) {
-            document = Jsoup.connect(url).get();
-        }
+        document = tryGetDocument();
         return document.
                 select("a[href]").
                 stream().
