@@ -1,6 +1,5 @@
 package com.github.PetrIlya.crawler;
 
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public abstract class WebCrawler {
@@ -21,8 +20,6 @@ public abstract class WebCrawler {
     }
 
     public abstract void startCrawl();
-
-    public abstract CompletableFuture<Void> startCrawlAsync();
 
     public int getMaxDepth() {
         return maxDepth;

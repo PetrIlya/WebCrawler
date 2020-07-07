@@ -17,12 +17,11 @@ public class PropertiesUtil {
      */
     public static Properties getProperties(final int initialSize,
                                            final String pathToProperties) throws IOException {
-        if (pathToProperties.isEmpty()) {
-            throw new IllegalArgumentException("Path to the configuration file doesn't specified");
+        if (pathToProperties.isEmpty() || initialSize <= 0) {
+            throw new IllegalArgumentException("Invalid argument");
         }
         final Properties properties = new Properties(initialSize);
         try (final InputStream propertiesStream = new FileInputStream(pathToProperties)) {
-            final String pathToResource = PathUtil.getAbsolutePathToResource(pathToProperties);
             properties.load(propertiesStream);
             return properties;
         }

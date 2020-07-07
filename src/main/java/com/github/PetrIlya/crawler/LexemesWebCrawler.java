@@ -6,7 +6,6 @@ import com.github.PetrIlya.net.LexemeStatistic;
 import java.io.IOException;
 import java.util.Queue;
 import java.util.Set;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.stream.Collectors;
@@ -24,13 +23,6 @@ public class LexemesWebCrawler extends WebCrawler {
         this.visited = new ConcurrentSkipListSet<>();
         this.statistic = new LexemeStatistic(lexemes);
         this.toVisit = new LinkedBlockingDeque<>();
-    }
-
-    @Override
-    public CompletableFuture<Void> startCrawlAsync() {
-        toVisit.add(new CrawlURL(this.getSeed(),
-                                 0));
-        return null;
     }
 
     @Override

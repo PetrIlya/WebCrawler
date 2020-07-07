@@ -10,6 +10,7 @@ import java.io.UncheckedIOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public final class CSVUtil {
     /**
@@ -23,6 +24,8 @@ public final class CSVUtil {
     public static void writeToFileLexemeStatistic(Map<CrawlURL, Map<String, Integer>> statistic,
                                                   String[] headers,
                                                   String pathToFile) throws IOException {
+        Objects.requireNonNull(statistic);
+        Objects.requireNonNull(headers);
         final int amountOfColumns = headers.length;
         try (CSVPrinter printer = new CSVPrinter(new FileWriter(pathToFile),
                                                  CSVFormat.DEFAULT.
