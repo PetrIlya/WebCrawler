@@ -42,7 +42,7 @@ public class LexemeStatisticTest {
 
     @Test
     public void getAmountOfEntries_ValidCase() throws IOException {
-        Assert.assertEquals(425, statistic.
+        Assert.assertEquals(426, statistic.
                 getAmountOfEntries(new CrawlURL("https://en.wikipedia.org/wiki/SpaceX",
                                                 0),
                                    "SpaceX"));
